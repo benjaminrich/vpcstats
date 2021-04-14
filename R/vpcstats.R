@@ -46,7 +46,7 @@ observed <- function(o, ...) UseMethod("observed")
 
 #' @rdname observed
 #' @export
-observed.data.frame <- function(o, x, yobs, pred=NULL, blq=NULL, lloq=-Inf, alq=NULL, uloq=Inf, ...) {
+observed.data.frame <- function(o, x=NULL, yobs, pred=NULL, blq=NULL, lloq=-Inf, alq=NULL, uloq=Inf, ...) {
   data <- o
   x    <- rlang::eval_tidy(rlang::enquo(x),    data)
   yobs <- rlang::eval_tidy(rlang::enquo(yobs), data)

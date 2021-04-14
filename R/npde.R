@@ -24,10 +24,18 @@
 #'
 #' npde <- observed(obs, x=NULL, y=DV) %>%
 #'     simulated(sim, y=DV) %>%
-#'     npde(id=ID)
+#'     npde.tidyvpcobj(id=ID)
 #'
 #' vpc <- observed(npde$npdeobs, x=epred, y=npde) %>%
 #'     simulated(npde$npdesim, y=npde) %>%
+#'     binning("eqcut", nbins=10) %>%
+#'     vpcstats()
+#'
+#' plot(vpc) + labs(x="Simulation-based Population Prediction", y="Normalized Prediction Distribution Error")
+#'
+#' vpc <- observed(obs, y=DV) %>%
+#'     simulated(sim, y=DV) %>%
+#'     npde(id=ID) %>%
 #'     binning("eqcut", nbins=10) %>%
 #'     vpcstats()
 #'
@@ -39,7 +47,7 @@ npde <- function(o, ...) UseMethod("npde")
 
 #' @rdname npde
 #' @export
-npde.tidyvpcobj <- function(o, id, data=o$data, smooth=FALSE, ...) {
+npde.tidyvpcobj <- function(o, id, x=rlang::sym("epred"), y=rlang::sym("npde"), data=o$data, smooth=FALSE, ...) {
 
   if (missing(id)) {
     id <- o$id
@@ -131,7 +139,8 @@ npde.tidyvpcobj <- function(o, id, data=o$data, smooth=FALSE, ...) {
   npdeobs <- obssim[iter==0]
   npdesim <- obssim[iter!=0]
 
-  update(o, npdeobs=npdeobs, npdesim=npdesim)
+  #update(o, npdeobs=npdeobs, npdesim=npdesim)
+  observed(npdeobs, x=x, y=y) %>% simulated(npdesim, y=y)
 }
 
 # vim: ts=2 sw=2 et
